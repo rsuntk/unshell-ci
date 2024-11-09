@@ -1,0 +1,50 @@
+name: Decrypting
+
+on:
+  workflow_dispatch:
+    inputs:
+      FILE1:
+        description: File 1 (url)
+        default: 'rsuntk_defconfig'
+        required: true
+      FILE2:
+        description: File 2 (url)
+        default: 'rsuntk_defconfig'
+      VERBOSE:
+        description: Verbose
+        type: boolean
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Decrypting
+      run: |
+        wget -O FILE1.sh ${{ github.event.inputs.FILE1 }}
+        if [ ! -z ${{ github.event.inputs.FILE2 }} ]; then
+          wget -O FILE2.sh ${{ github.event.inputs.FILE2 }}
+        fi
+
+        if [[ "${{ github.event.inputs.VERBOSE }}" = "true" ]]; then
+          FLAGS+=" -v"
+        else
+          FLAGS+=""
+        fi
+        
+        FLAGS+="-f"
+        FLAGS+=" FILE1.sh"
+
+        if [ ! -z ${{ github.event.inputs.FILE2 }} ]; then
+          FLAGS+=" FILE2.sh"
+        fi
+
+
+        curl -sLo $(pwd)/unshell https://github.com/Rem01Gaming/unshell/raw/main/unshell
+        chmod +x $(pwd)/unshell
+        ./unshell $FLAGS
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: Decrypted_file
+        path: ./*.dec.sh
