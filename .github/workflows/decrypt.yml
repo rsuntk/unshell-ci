@@ -5,11 +5,9 @@ on:
     inputs:
       FILE1:
         description: File 1 (url)
-        default: 'rsuntk_defconfig'
         required: true
       FILE2:
         description: File 2 (url)
-        default: 'rsuntk_defconfig'
       VERBOSE:
         description: Verbose
         type: boolean
